@@ -33,8 +33,26 @@ pSeasons_SettingHolidaysEnabled.SetValueInt(1)
 EndFunction
 ;END FRAGMENT
 
+;BEGIN FRAGMENT Fragment_Terminal_05
+Function Fragment_Terminal_05(ObjectReference akTerminalRef)
+;BEGIN CODE
+pSeasons_SettingTransitions.SetValueInt(0)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_Terminal_06
+Function Fragment_Terminal_06(ObjectReference akTerminalRef)
+;BEGIN CODE
+pSeasons_SettingTransitions.SetValueInt(1)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
 GlobalVariable Property pSeasons_SettingShowReminder Auto Const Mandatory
 
 GlobalVariable Property pSeasons_SettingHolidaysEnabled Auto Const Mandatory
+
+GlobalVariable Property pSeasons_SettingTransitions Auto Const Mandatory
