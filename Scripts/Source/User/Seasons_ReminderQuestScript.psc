@@ -39,9 +39,12 @@ Message property Seasons_RemindMrPebblesDayMsg auto const
 
 int hasShownReminderDay = 0		; flag if shown to limit once per day
 int lastCheckedDay = 0          ; to short-circuit checking same day
+int lastDOWUpdateDay = -1		; day of week last checked day
 
 Event OnQuestInit()
 	RegisterForPlayerSleep()
+	; wait to register for menu - added v1.11
+	
 	StartTimer(4.0, 101) 
 EndEvent
 
@@ -51,20 +54,67 @@ Event OnTimer(int aiTimerID)
 	endIf
 EndEvent
 
+;
+; Pipboy open/close Menu event - v1.11
+; if new day need to update day-of-week for holotape display
+; this handles case after midnight
+; and before location change 
+;
+Event OnMenuOpenCloseEvent(string asMenuName, bool abOpening)
+	
+    if (asMenuName== "PipboyMenu")
+        if (abOpening)
+			
+			CheckDayForDOW()
+        endif
+    endif
+endEvent
+
 Event OnPlayerSleepStop(bool abInterrupted, ObjectReference akBed)
 	
 	StartTimer(8.0, 101)
 endEvent
 
+;
+; Day-of-Week check - added v1.10
+;
+Function CheckDayForDOW()
+	int day = GameDay.GetValueInt()
+	
+	if (lastDOWUpdateDay != day)
+		
+		; update day of week
+		Seasons_DOW.SetValueInt(DayOfWeek())
+		
+		; mark day as checked
+		lastDOWUpdateDay = day
+		
+	endIf
+endFunction
+
+;
+; notification only if new day
+;
 Function CheckDayForReminder()
 	int day = GameDay.GetValueInt()
 	int month = GameMonth.GetValueInt()
 	
-	if (Seasons_DOW.GetValueInt() < 0)
-		; force check now
+	; ---- Day-of-Week (DOW) - v1.10
+	;
+	if (Seasons_DOW.GetValueInt() < 0 || lastDOWUpdateDay < 0 || Seasons_DOW.GetValueInt() > 6)
+	
+		; register menu to update DOW to handle case after midnight
+		;
+		RegisterForMenuOpenCloseEvent("PipboyMenu")
+
+		; force all checks now
 		hasShownReminderDay = -2
 		lastCheckedDay = -1
+		lastDOWUpdateDay = -1
 	endIf
+	
+	CheckDayForDOW()
+	; --------------
 	
 	; check notification setting here at end so may short-circuit to reset flags
 	;
@@ -118,9 +168,6 @@ Function CheckDayForReminder()
 		; flag to skip same day
 		lastCheckedDay = day
 		
-		; update day of week
-		Seasons_DOW.SetValueInt(DayOfWeek())
-		
 	elseIf (day != hasShownReminderDay)
 	
 		if (day > (hasShownReminderDay + 1))
@@ -161,6 +208,7 @@ int Function DayOfWeek()
 	
 	return remainder 
 endFunction
+
 
 Function ShowReminder(Message msg, int flagVal)
 		
