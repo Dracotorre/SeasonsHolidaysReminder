@@ -13,12 +13,15 @@ Scriptname Seasons_ReminderQuestScript extends Quest
 ; See the Seasons_PlayerAliasScript for other events including load game and location change.
 
 
-GlobalVariable Property GameMonth Auto Const
-GlobalVariable Property GameDay Auto Const
+GlobalVariable property GameYear auto const
+GlobalVariable property GameMonth Auto Const
+GlobalVariable property GameDay Auto Const
 GlobalVariable property Seasons_SettingHolidaysEnabled auto const
 { show holiday notification setting }
 GlobalVariable property Seasons_SettingShowReminder auto const
 { enable notification setting }
+GlobalVariable property Seasons_DOW auto
+{ day of week }
 Message property Seasons_RemindAutumnMsg auto const
 Message property Seasons_RemindSpringMsg auto const
 Message property Seasons_RemindSummerMsg auto const
@@ -56,6 +59,12 @@ endEvent
 Function CheckDayForReminder()
 	int day = GameDay.GetValueInt()
 	int month = GameMonth.GetValueInt()
+	
+	if (Seasons_DOW.GetValueInt() < 0)
+		; force check now
+		hasShownReminderDay = -2
+		lastCheckedDay = -1
+	endIf
 	
 	; check notification setting here at end so may short-circuit to reset flags
 	;
@@ -109,6 +118,9 @@ Function CheckDayForReminder()
 		; flag to skip same day
 		lastCheckedDay = day
 		
+		; update day of week
+		Seasons_DOW.SetValueInt(DayOfWeek())
+		
 	elseIf (day != hasShownReminderDay)
 	
 		if (day > (hasShownReminderDay + 1))
@@ -119,6 +131,35 @@ Function CheckDayForReminder()
 			hasShownReminderDay = -1
 		endIf
 	endIf
+endFunction
+
+; 0 = Sunday ... 6 = Saturday
+int Function DayOfWeek()
+
+	; Zeller's Rule
+	; f = k + [(13*m-1)/5] + D + [D/4] + [C/4] - 2*C.
+	
+	int k = GameDay.GetValueInt()
+	int m = GameMonth.GetValueInt() - 2  ; march = 1 for convenience after leap-year
+	if (m <= 0)
+		m += 12
+	endIf
+	int C = 22  ; first 2 digits of year
+	int D = GameYear.GetValueInt() ; 3 digits 
+	D -= 200 ; last 2 digits
+	
+	
+	int f = k + ((13 * m - 1) / 5) as int + D + (D / 4) as int + (C / 4) as int - 2 * C
+	
+	int div7 = f / 7
+	int remainder = f - (7 * div7)
+	if (remainder < 0)
+		remainder += 7
+	endIf
+	
+	;Debug.Trace("[Seasons] D = " + D + ", f = " + f + ", r = " + remainder)
+	
+	return remainder 
 endFunction
 
 Function ShowReminder(Message msg, int flagVal)
