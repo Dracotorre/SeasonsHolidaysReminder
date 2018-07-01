@@ -21,7 +21,7 @@ GlobalVariable property Seasons_SettingHolidaysEnabled auto const
 GlobalVariable property Seasons_SettingShowReminder auto const
 { enable notification setting }
 GlobalVariable property Seasons_DOW auto
-{ day of week }
+{ day of week; 0 = Sunday ... 6 = Saturday }
 Message property Seasons_RemindAutumnMsg auto const
 Message property Seasons_RemindSpringMsg auto const
 Message property Seasons_RemindSummerMsg auto const
@@ -40,6 +40,7 @@ Message property Seasons_RemindMrPebblesDayMsg auto const
 int hasShownReminderDay = 0		; flag if shown to limit once per day
 int lastCheckedDay = 0          ; to short-circuit checking same day
 int lastDOWUpdateDay = -1		; day of week last checked day
+int lastDOWUpdateMonth = -1
 
 Event OnQuestInit()
 	RegisterForPlayerSleep()
@@ -80,14 +81,17 @@ endEvent
 ;
 Function CheckDayForDOW()
 	int day = GameDay.GetValueInt()
+	int month = GameMonth.GetValueInt()
 	
-	if (lastDOWUpdateDay != day)
+	; check month in case user skips dates
+	if (lastDOWUpdateDay != day || lastDOWUpdateMonth != month)
 		
 		; update day of week
 		Seasons_DOW.SetValueInt(DayOfWeek())
 		
 		; mark day as checked
 		lastDOWUpdateDay = day
+		lastDOWUpdateMonth = month
 		
 	endIf
 endFunction
