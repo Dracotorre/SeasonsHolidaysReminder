@@ -227,10 +227,10 @@ int Function DayOfWeek()
 	if (D < 87)
 		D = 87
 		float gameTimeDay = Utility.GetCurrentGameTime()
-		if (gameTimeDay > 69 && gameTimeDay < 436)
+		if (gameTimeDay > 69.0 && gameTimeDay < 436.0)
 			; a leap-year - 366 days
 			D = 88
-		elseIf (gameTimeDay < 801)
+		elseIf (gameTimeDay < 801.0)
 			D = 89
 		else
 			D = 90 + Math.Floor((gameTimeDay - 800.0) / 365.24)
