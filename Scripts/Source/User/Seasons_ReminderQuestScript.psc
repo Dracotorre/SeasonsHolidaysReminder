@@ -115,6 +115,7 @@ Function CheckDayForReminder()
 	int day = GameDay.GetValueInt()
 	int month = GameMonth.GetValueInt()
 	int checkDOW = -2
+	float gTime = Utility.GetCurrentGameTime()
 	
 	; edit for checkDOW - some users pre-1.12 may be missing property
 	if (Seasons_DOW != None)
@@ -142,7 +143,7 @@ Function CheckDayForReminder()
 	
 	; check notification setting here at end so may short-circuit to reset flags
 	;
-	if (hasShownReminderDay <= 0 && lastCheckedDay != day && Seasons_SettingShowReminder.GetValueInt() > 0)
+	if (gTime > 0.9 && hasShownReminderDay <= 0 && lastCheckedDay != day && Seasons_SettingShowReminder.GetValueInt() > 0)
 		
 		if (Seasons_SettingHolidaysEnabled.GetValueInt() > 0 && month == 1 && day == 1)
 			ShowReminder(Seasons_RemindNewYearMsg, day)
