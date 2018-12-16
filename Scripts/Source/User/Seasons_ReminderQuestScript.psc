@@ -31,6 +31,7 @@ Message property Seasons_RemindIndependenceDayMsg auto const
 Message property Seasons_RemindHalloweenMsg auto const
 Message property Seasons_RemindChristmasMsg auto const
 Message property Seasons_RemindPatrickDayMsg auto const
+Message property Seasons_RemindValentineDayMsg auto const
 Message property Seasons_RemindRobCoDayMsg auto const
 Message property Seasons_RemindNukaWorldDayMsg auto const
 Message property Seasons_RemindNukaQuantumMsg auto const
@@ -147,6 +148,8 @@ Function CheckDayForReminder()
 		
 		if (Seasons_SettingHolidaysEnabled.GetValueInt() > 0 && month == 1 && day == 1)
 			ShowReminder(Seasons_RemindNewYearMsg, day)
+		elseIf (month == 2 && day == 14)
+			ShowReminder(Seasons_RemindValentineDayMsg, day)
 		elseIf (month == 3)
 			if (day == 17 && Seasons_SettingHolidaysEnabled.GetValueInt() > 0)
 				ShowReminder(Seasons_RemindPatrickDayMsg, day)
