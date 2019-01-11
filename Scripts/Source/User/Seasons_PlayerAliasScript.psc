@@ -11,6 +11,7 @@ Quest property Seasons_ReminderQuest auto
 
 Event OnPlayerLoadGame()
 	
+	(Seasons_ReminderQuest as Seasons_ReminderQuestScript).CurrentDOWVal = -2	; force reset
 	
 	StartTimer(3.0, 103)
 EndEvent

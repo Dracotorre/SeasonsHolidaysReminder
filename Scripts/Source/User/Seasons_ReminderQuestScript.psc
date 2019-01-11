@@ -89,7 +89,7 @@ Function CheckDayForDOW()
 	int month = GameMonth.GetValueInt()
 	
 	; check month in case user skips dates
-	if (lastDOWUpdateDay != day || lastDOWUpdateMonth != month)
+	if (lastDOWUpdateDay != day || lastDOWUpdateMonth != month || CurrentDOWVal < 0)
 		
 		CurrentDOWVal = DayOfWeek()
 		
@@ -218,15 +218,17 @@ int Function DayOfWeek()
 	
 	int k = GameDay.GetValueInt()
 	int m = GameMonth.GetValueInt() - 2  ; march = 1 for convenience after leap-year
-	if (m <= 0)
-		m += 12
-	endIf
 	int C = 22  ; first 2 digits of year
 	int D = 0
 	if (GameYear != None)
 		D = GameYear.GetValueInt() ; 3 digits
 		D -= 200 ; last 2 digits
 	endIf 
+	
+	if (m <= 0)
+		m += 12
+		D -= 1	; previous year
+	endIf
 	
 	if (D < 87)
 		D = 87
