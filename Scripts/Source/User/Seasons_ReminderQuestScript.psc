@@ -12,7 +12,8 @@ Scriptname Seasons_ReminderQuestScript extends Quest
 ; This script watches player sleep event
 ; See the Seasons_PlayerAliasScript for other events including load game and location change.
 
-
+Quest property MQ101 auto const
+Quest property MQ102 auto const
 GlobalVariable property GameYear auto const		; ESL version -- might be None for some players prior v1.12
 GlobalVariable property GameMonth Auto Const
 GlobalVariable property GameDay Auto Const
@@ -118,6 +119,15 @@ Function CheckDayForReminder()
 	int checkDOW = -2
 	float gTime = Utility.GetCurrentGameTime()
 	
+	if (MQ101.IsRunning() && !MQ101.IsCompleted())
+		; intro -- wait until later
+		return
+
+	elseIf (MQ102.IsRunning() && MQ102.GetStageDone(10) == 0)
+		; still in vault 111
+		return
+	endIf
+	
 	; edit for checkDOW - some users pre-1.12 may be missing property
 	if (Seasons_DOW != None)
 		checkDOW = Seasons_DOW.GetValueInt()
@@ -141,6 +151,8 @@ Function CheckDayForReminder()
 	
 	CheckDayForDOW()
 	; --------------
+	
+	
 	
 	; check notification setting here at end so may short-circuit to reset flags
 	;
